@@ -36,7 +36,7 @@ export class Course {
 
   @OneToMany(
     () => CoursesWeek,
-    (coursesWeek: CoursesWeek) => coursesWeek.course_id,
+    (coursesWeek: CoursesWeek) => coursesWeek.course,
   )
   coursesWeeks: CoursesWeek[];
 }

@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCourseDto } from './dto/create-course.dto';
-import { UpdateCourseDto } from './dto/update-course.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from '../entities/course.entity';
 import { Repository } from 'typeorm';
+import { UserAccessCourse } from '../entities/user-access-course.entity';
 
 @Injectable()
 export class CoursesService {
@@ -11,23 +10,15 @@ export class CoursesService {
     @InjectRepository(Course)
     private readonly courseRepository: Repository<Course>,
   ) {}
-  create(createCourseDto: CreateCourseDto) {
-    return 'This action adds a new course';
-  }
+  async remove(user_id: number, courseId: number) {
+    const remove = await this.courseRepository
+      .createQueryBuilder()
+      .delete()
+      .from(UserAccessCourse)
+      .where('user_id = :user_id', { user_id })
+      .andWhere('course_id = :courseId', { courseId })
+      .execute();
 
-  async findAll() {
-    return this.courseRepository.find();
-  }
-
-  findOne(course_id: number) {
-    return this.courseRepository.findOneBy({ course_id });
-  }
-
-  update(id: number, updateCourseDto: UpdateCourseDto) {
-    return `This action updates a #${id} course`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} course`;
+    return remove;
   }
 }

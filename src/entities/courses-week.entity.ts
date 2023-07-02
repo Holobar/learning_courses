@@ -16,12 +16,15 @@ export class CoursesWeek {
   week: number;
 
   @Column()
+  description: string;
+
+  @Column()
   video_path: string;
 
   @Column()
   file_path: string;
 
-  @ManyToOne(() => Course, (course: Course) => course.course_id)
+  @ManyToOne(() => Course, (course: Course) => course.coursesWeeks)
   @JoinColumn({ name: 'course_id' })
-  course_id: Course;
+  course: Course;
 }

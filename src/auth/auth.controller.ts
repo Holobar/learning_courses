@@ -26,7 +26,7 @@ export class AuthController {
   logout(@Request() req) {
     req.res.setHeader(
       'Set-Cookie',
-      `Access_token=; HttpOnly; Path=/; Max-Age=0`,
+      `Access_token=; HttpOnly; Path=/; Max-Age=0; sameSite:none`,
     );
   }
 }

@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCoursesWeekDto } from './dto/create-courses-week.dto';
-import { UpdateCoursesWeekDto } from './dto/update-courses-week.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CoursesWeek } from '../entities/courses-week.entity';
 import { Repository } from 'typeorm';
@@ -11,25 +9,25 @@ export class CoursesWeeksService {
     @InjectRepository(CoursesWeek)
     private readonly coursesWeekRepository: Repository<CoursesWeek>,
   ) {}
-  create(createCoursesWeekDto: CreateCoursesWeekDto) {
-    return 'This action adds a new coursesWeek';
-  }
 
-  findAll() {
-    return `This action returns all coursesWeeks`;
-  }
+  async findAllInCourse(
+    user_id: number,
+    courseId: number,
+  ): Promise<CoursesWeek[]> {
+    const coursesWeeks = await this.coursesWeekRepository
+      .createQueryBuilder('cw')
+      .select('cw.*')
+      .addSelect(
+        "CASE WHEN uAC.current_week >= cw.week THEN 'Unlocked' ELSE 'Locked' END",
+        'odkleni',
+      )
+      .innerJoin('cw.course', 'c')
+      .innerJoin('c.userAccessCourses', 'uAC')
+      .where('uAC.user_id = :userId', { userId: user_id })
+      .andWhere('c.course_id = :courseId', { courseId: courseId })
+      .orderBy('week')
+      .getRawMany();
 
-  async findAllInCourse(course_id: number) {
-    return await this.coursesWeekRepository.find({
-      where: { course_id: { course_id } },
-    });
-  }
-
-  update(id: number, updateCoursesWeekDto: UpdateCoursesWeekDto) {
-    return `This action updates a #${id} coursesWeek`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} coursesWeek`;
+    return coursesWeeks;
   }
 }

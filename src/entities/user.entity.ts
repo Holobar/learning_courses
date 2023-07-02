@@ -27,6 +27,9 @@ export class User {
   @CreateDateColumn()
   created_at: Date;
 
-  @OneToMany(() => UserAccessCourse, (userAccessCourse: UserAccessCourse) => userAccessCourse.user)
+  @OneToMany(
+      () => UserAccessCourse,
+      (userAccessCourse: UserAccessCourse) => userAccessCourse.user,
+  )
   userAccessCourses: UserAccessCourse[];
 }
